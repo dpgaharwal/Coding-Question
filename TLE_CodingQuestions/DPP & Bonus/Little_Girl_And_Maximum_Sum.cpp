@@ -1,52 +1,62 @@
 // Problem Link: https://codeforces.com/problemset/problem/276/C
 
-#include <iostream>
-#include <vector>
-#include <algorithm>
-
+#include <bits/stdc++.h>
 using namespace std;
+
+using ll = long long;
+using ld = long double;
+using vi = vector<int>;
+using vll = vector<ll>;
+using vvi = vector<vi>;
+using pii = pair<int, int>;
+using pll = pair<ll, ll>;
+
+const int MOD = 1e9 + 7;
+const int INF = INT_MAX;
 
 int main()
 {
     int n, q;
     cin >> n >> q;
-
-    vector<int> a(n); // Array elements
+    vector<ll> a(n);
     for (int i = 0; i < n; i++)
     {
         cin >> a[i];
     }
 
-    vector<int> freq(n + 1, 0); // Difference array for frequency calculation
+    // Array to store frequency of indices
+    vector<ll> pre(n + 1, 0);
 
-    // Process each query using the difference array
-    for (int i = 0; i < q; i++)
+    // Process queries
+    while (q--)
     {
         int l, r;
         cin >> l >> r;
-        freq[l - 1]++; // Increment at the start of the range
+        pre[l - 1]++; // Adjust to 0-based index
         if (r < n)
-            freq[r]--; // Decrement just after the end of the range
+            pre[r]--;
     }
 
-    // Convert the difference array into a frequency array using prefix sum
+    // Compute prefix sum to get frequency of each index
     for (int i = 1; i < n; i++)
     {
-        freq[i] += freq[i - 1];
+        pre[i] += pre[i - 1];
     }
 
-    freq.pop_back();                                // Remove the extra space at the end
-    sort(freq.begin(), freq.end(), greater<int>()); // Sort frequencies in descending order
-    sort(a.begin(), a.end(), greater<int>());       // Sort array in descending order
+    // Keep only the first n elements
+    pre.resize(n);
+
+    // Sort the array and frequency
+    sort(a.begin(), a.end());
+    sort(pre.begin(), pre.end());
 
     // Calculate the maximum sum
-    long long maxSum = 0;
+    ll ans = 0;
     for (int i = 0; i < n; i++)
     {
-        maxSum += 1LL * a[i] * freq[i];
+        ans += a[i] * pre[i];
     }
 
-    cout << maxSum << endl;
-
+    cout << ans << endl;
     return 0;
 }
